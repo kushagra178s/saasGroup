@@ -4,14 +4,11 @@ const bodyParser = require("body-parser");
 const app = express();
 const { Snowflake } = require("@theinternetfolks/snowflake");
 const jwt = require("jsonwebtoken");
-const connection = require("../../mongodb");
-const Role = require("../../models/roleModel");
 const Community = require("../../models/communityModel");
 const Member = require("../../models/memberModel");
-const secretKey = "your-secret-key";
+const secretKey = "something";
 
 router.post("/", async (req, res) => {
-  // res.send("community")
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
 
@@ -21,15 +18,12 @@ router.post("/", async (req, res) => {
         .json({ message: "Access denied. No token provided." });
     }
 
-    // console.log(token)
 
     try {
       const decoded = jwt.verify(token, secretKey);
       req.data = decoded;
 
-      // Assuming decoded contains the necessary information, replace 'decoded' with the actual user information
       const currentUser = decoded;
-      console.log("token data = ", decoded.user.id);
 
       const newCommunity = new Community({
         id: Snowflake.generate(),
@@ -38,7 +32,7 @@ router.post("/", async (req, res) => {
         owner: decoded.user.id,
       });
 
-      // // Save the new community to the database
+      // Save the new community to the database
       await newCommunity.save();
 
       res.status(201).json({
@@ -65,7 +59,6 @@ router.get("/", async (req, res) => {
 router.get("/:id/members", async (req, res) => {
   try {
     const communityId = req.params.id;
-    // console.log(communityId);
     const members = await Member.find();
     const responseData = {
       status: true,
@@ -95,7 +88,6 @@ router.get("/me/owner", async (req, res) => {
     }
     const decoded = jwt.verify(token, secretKey);
     req.data = decoded;
-    // console.log("jwtdata = ", decoded)
     const myId = decoded.user.id;
     const serverData = await Community.find({ owner: myId });
     const responseData = {
@@ -114,10 +106,10 @@ router.get("/me/owner", async (req, res) => {
     res.json({ error: e.message });
   }
 });
+
 router.get("/me/member", async(req, res)=>{
   try{
     const token = req.header("Authorization")?.replace("Bearer ", "");
-    console.log(token);
     if (!token) {
       return res
         .status(401)

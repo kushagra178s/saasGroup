@@ -1,11 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const app = express();
 const { Snowflake } = require("@theinternetfolks/snowflake");
 app.use(bodyParser());
-const connection = require("../../mongodb");
 const Role = require("../../models/roleModel"); 
 
 

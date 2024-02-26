@@ -1,13 +1,13 @@
 const express = require("express");
-const router = express.Router();
 const mongoose = require("mongoose");
+
 const bodyParser = require("body-parser");
 const app = express();
-const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
+
 app.use(bodyParser());
 
-// Connect to MongoDB (replace 'yourDatabaseName' with your desired database name)
+const PORT = process.env.PORT || 3001;
+
 mongoose.connect("mongodb://localhost:27017/tifdatabase", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -23,6 +23,6 @@ app.use((req, res) => {
 });
 
 //server
-app.listen(3001, function (req, res) {
+app.listen(PORT, function (req, res) {
   console.log("server started at port 3001.");
 });

@@ -1,12 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
+
 const bodyParser = require("body-parser");
 const app = express();
+
 app.use(bodyParser());
 const bcrypt = require("bcrypt");
+
 const jwt = require("jsonwebtoken");
-const secretKey = "your-secret-key";
+const secretKey = "something";
+
 const User = require("../../models/usersModel");
 const { Snowflake } = require("@theinternetfolks/snowflake");
 
@@ -32,7 +35,6 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/signin", async (req, res) => {
-  //   return res.status(200).json("signin");
   try {
     const data = req.body;
     const user = await User.findOne({ email: data.email });
@@ -47,7 +49,6 @@ router.post("/signin", async (req, res) => {
     // Create a JWT
     const token = jwt.sign({ user }, secretKey, { expiresIn: "1h" });
 
-    // Send the token in the response
     res.json({ token });
   } catch (e) {
     return res.json({ error: e });
@@ -63,21 +64,15 @@ const verifyToken = (req, res, next) => {
       .json({ message: "Access denied. No token provided." });
   }
   try {
-    const decoded = jwt.verify(token, secretKey); // Use the correct secretKey variable
-    req.data = decoded; // Assuming you want to extract the 'data' property from the decoded token
-    // console.log("jwtdata = ", decoded)
+    const decoded = jwt.verify(token, secretKey); 
+    req.data = decoded;
     next();
   } catch (error) {
     res.status(400).json({ message: "Invalid token." });
   }
 };
 
-// router.get("/protected-route", verifyToken, (req, res) => {
-//   res.json({ message: "This is a protected route", user: req.email });
-// });
-
 router.get("/me", verifyToken, (req, res) => {
-  //   return res.status(200).json("hm");
   const { user } = req.data;
   return res.status(200).json({
     id: user.id,

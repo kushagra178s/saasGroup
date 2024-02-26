@@ -4,11 +4,9 @@ const bodyParser = require("body-parser");
 const app = express();
 const { Snowflake } = require("@theinternetfolks/snowflake");
 const jwt = require("jsonwebtoken");
-const connection = require("../../mongodb");
-const Role = require("../../models/roleModel");
 const Community = require("../../models/communityModel");
 const Member = require("../../models/memberModel");
-const secretKey = "your-secret-key";
+const secretKey = "something";
 router.post("/", async (req, res) => {
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
@@ -19,14 +17,11 @@ router.post("/", async (req, res) => {
         .json({ message: "Access denied. No token provided." });
     }
 
-    // console.log(token)
 
     const decoded = jwt.verify(token, secretKey);
     req.data = decoded;
 
-    // Assuming decoded contains the necessary information, replace 'decoded' with the actual user information
     const currentUser = decoded.user.id;
-    // console.log("token data = ", decoded.user.id);
     const postdata = req.body;
     const a = await Community.find({ id: postdata.community });
     if (a.owner === currentUser) {
