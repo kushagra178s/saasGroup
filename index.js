@@ -17,18 +17,10 @@ const v1Route = require("./routes/v1/v1Route");
 
 app.use("/v1", v1Route);
 
-// Create models
-// const User = require('./models/usersModel');
-const Community = require('./models/communityModel');
-const Role = require('./models/roleModel');
-const Member = require('./models/memberModel');
-
-//restapi
-app.get("/v1/role", (req, res) => {
-  return res.status(200).json("hello");
-  // res.send("hello")
+//global error
+app.use((req, res) => {
+  return res.status(200).json("error in the route");
 });
-
 
 //server
 app.listen(3001, function (req, res) {
